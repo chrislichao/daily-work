@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chrisli.export.mapper.ExportMapper">
+
+    <select id="getTableVoList" resultType="org.chrisli.export.model.TableVo">
+        SELECT
+        T.TABLE_NAME AS name,
+        T.TABLE_COMMENT AS remark
+        FROM
+        information_schema.`TABLES` T
+        WHERE
+        T.TABLE_SCHEMA = 'hds_center'
+        ORDER BY
+        T.TABLE_NAME
+    </select>
+
+    <select id="getColumnVoList" resultType="org.chrisli.export.model.ColumnVo">
+        SELECT
+        C.COLUMN_COMMENT AS name,
+        C.COLUMN_NAME AS fieldName,
+        C.DATA_TYPE AS type,
+        IFNULL(C.CHARACTER_MAXIMUM_LENGTH,'') AS length,
+        IF(C.IS_NULLABLE='Yes','是','否') isNull,
+        C.COLUMN_COMMENT AS remark
+        FROM
+        information_schema.`COLUMNS` C
+        WHERE
+        C.TABLE_NAME = #{tableName}
+    </select>
+</mapper>
