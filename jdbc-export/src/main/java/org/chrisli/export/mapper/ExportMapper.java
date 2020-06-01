@@ -13,6 +13,6 @@ import java.util.Map;
  * @create [2017-04-12]
  */
 public interface ExportMapper {
-    List<TableVo> getTableVoList();
+    List<TableVo> getTableVoList(String tableSchema);
     List<ColumnVo> getColumnVoList(Map<String, Object> paramMap);
 }

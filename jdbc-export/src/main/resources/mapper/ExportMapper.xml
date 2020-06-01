@@ -4,27 +4,28 @@
 
     <select id="getTableVoList" resultType="org.chrisli.export.model.TableVo">
         SELECT
-        T.TABLE_NAME AS name,
-        T.TABLE_COMMENT AS remark
+            T.TABLE_NAME AS name,
+            T.TABLE_COMMENT AS remark
         FROM
-        information_schema.`TABLES` T
+            information_schema.`TABLES` T
         WHERE
-        T.TABLE_SCHEMA = 'hds_center'
+            T.TABLE_SCHEMA = #{tableSchema}
         ORDER BY
-        T.TABLE_NAME
+            T.TABLE_NAME
     </select>
 
     <select id="getColumnVoList" resultType="org.chrisli.export.model.ColumnVo">
         SELECT
-        C.COLUMN_COMMENT AS name,
-        C.COLUMN_NAME AS fieldName,
-        C.DATA_TYPE AS type,
-        IFNULL(C.CHARACTER_MAXIMUM_LENGTH,'') AS length,
-        IF(C.IS_NULLABLE='Yes','是','否') isNull,
-        C.COLUMN_COMMENT AS remark
+            C.COLUMN_COMMENT AS name,
+            C.COLUMN_NAME AS fieldName,
+            C.DATA_TYPE AS type,
+            IFNULL(C.CHARACTER_MAXIMUM_LENGTH,'') AS length,
+            IF(C.IS_NULLABLE='Yes','是','否') isNull,
+            C.COLUMN_COMMENT AS remark
         FROM
-        information_schema.`COLUMNS` C
+            information_schema.`COLUMNS` C
         WHERE
-        C.TABLE_NAME = #{tableName}
+            C.TABLE_SCHEMA = #{tableSchema}
+            AND C.TABLE_NAME = #{tableName}
     </select>
 </mapper>

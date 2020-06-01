@@ -53,7 +53,7 @@
 
         <dependency>
             <groupId>org.chrisli</groupId>
-            <artifactId>tool-kit-log4jdbc</artifactId>
+            <artifactId>tool-kit-spring-log4jdbc</artifactId>
         </dependency>
 
         <dependency>

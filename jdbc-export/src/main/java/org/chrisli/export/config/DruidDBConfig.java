@@ -3,8 +3,6 @@ package org.chrisli.export.config;
 import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.chrisli.log4jdbc.interceptor.Log4jdbcInterceptor;
-import org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -110,30 +108,5 @@ public class DruidDBConfig {
         datasource.setConnectionProperties(connectionProperties);
 
         return datasource;
-    }
-
-    /**
-     * [JDBC日志拦截器]
-     *
-     * @author Chris li[黎超]
- * @create [2017-04-12]
-     */
-    @Bean
-    public Log4jdbcInterceptor log4jdbcInterceptor() {
-        return new Log4jdbcInterceptor();
-    }
-
-    /**
-     * [数据资源日志代理类]
-     *
-     * @author Chris li[黎超]
- * @create [2017-04-12]
-     */
-    @Bean
-    public BeanNameAutoProxyCreator dataSourceLog4jdbcAutoProxyCreator() {
-        BeanNameAutoProxyCreator creator = new BeanNameAutoProxyCreator();
-        creator.setInterceptorNames("log4jdbcInterceptor");
-        creator.setBeanNames("dataSource");
-        return creator;
     }
 }

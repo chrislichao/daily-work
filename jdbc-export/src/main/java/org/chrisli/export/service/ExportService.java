@@ -22,16 +22,20 @@ public class ExportService {
     @Autowired
     private ExportMapper exportMapper;
 
-    public void exportTableColumn() {
+    private static String WORD_NAME_FORMAT = "%s-%s-数据库表结构.doc";
+
+    public void exportTableColumn(String projectName, String tableSchema, String tableSchemaDesc) {
         Map<String, Object> dataMap = new HashMap<String, Object>();
-        List<TableVo> tableVoList = exportMapper.getTableVoList();
+        List<TableVo> tableVoList = exportMapper.getTableVoList(tableSchema);
         Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("tableSchema", tableSchema);
         for (TableVo tableVo : tableVoList) {
             paramMap.put("tableName", tableVo.getName());
             List<ColumnVo> columnVoList = exportMapper.getColumnVoList(paramMap);
             tableVo.setColumnList(columnVoList);
         }
         dataMap.put("tableList", tableVoList);
-        WordUtil.createWord(dataMap, "导出模板.ftl", "D:/", "中台数据库表结构.doc");
+        String wordName = String.format(WORD_NAME_FORMAT, projectName, tableSchemaDesc);
+        WordUtil.createWord(dataMap, "导出模板.ftl", "C:/ChrisLi", wordName);
     }
 }

@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Chris li[黎超]
  * @create [2017-04-12]
  */
-@Configuration
+// @Configuration
 public class DruidMonitorConfig {
 
     @Value("${druid.monitor.config.login.username}")
