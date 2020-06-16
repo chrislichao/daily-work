@@ -10,74 +10,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
+        <module>activiti-demo</module>
         <module>jdbc-export</module>
     </modules>
 
-    <parent>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <groupId>org.springframework.boot</groupId>
-        <version>1.5.14.RELEASE</version>
-    </parent>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- springboot整合mybatis-->
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>1.3.1</version>
-            </dependency>
-
-            <!-- springboot分页插件 -->
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>1.2.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>5.1.2</version>
-            </dependency>
-
-            <!-- 阿里巴巴druid数据库连接池 -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid</artifactId>
-                <version>1.1.3</version>
-            </dependency>
-
-            <!-- freemark -->
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>2.3.20</version>
-            </dependency>
-            <!-- mysql驱动 -->
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.39</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.chrisli</groupId>
-                <artifactId>tool-kit-mybatis</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.chrisli</groupId>
-                <artifactId>tool-kit-spring-log4jdbc</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.chrisli</groupId>
-                <artifactId>tool-kit-utils</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
