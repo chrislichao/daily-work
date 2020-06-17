@@ -187,10 +187,13 @@ public class ModelerController {
         Model modelData = repositoryService.getModel(modelId);
         if (null != modelData) {
             try {
+
                 ProcessInstance pi = runtimeService.createProcessInstanceQuery().processDefinitionKey(modelData.getKey()).singleResult();
                 if (null != pi) {
                     runtimeService.deleteProcessInstance(pi.getId(), "");
                     historyService.deleteHistoricProcessInstance(pi.getId());
+                    repositoryService.deleteDeployment(pi.getDeploymentId(), true);
+                    repositoryService.deleteModel(modelId);
                 }
                 map.put("code", "SUCCESS");
             } catch (Exception e) {
