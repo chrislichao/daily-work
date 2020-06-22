@@ -27,6 +27,7 @@
 	            <td width="40%">
 	             <a href="/editor?modelId=${model.id}">编辑</a>
 	             <a href="/publish?modelId=${model.id}">发布</a>
+	             <a href="/viewPng?modelId=${model.id}">流程图</a>
 	             <a href="/revokePublish?modelId=${model.id}">撤销</a>
 	             <a href="/delete?modelId=${model.id}">删除</a>
 	            </td>

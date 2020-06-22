@@ -51,11 +51,8 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
      */
     @RequestMapping(value = "/model/{modelId}/save", method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
-    public void saveModel(@PathVariable String modelId
-            , String name, String description
-            , String json_xml, String svg_xml) {
+    public void saveModel(@PathVariable String modelId, String name, String description, String json_xml, String svg_xml) {
         try {
-
             Model model = repositoryService.getModel(modelId);
 
             ObjectNode modelJson = (ObjectNode) objectMapper.readTree(model.getMetaInfo());

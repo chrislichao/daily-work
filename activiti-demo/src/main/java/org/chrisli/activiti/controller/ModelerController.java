@@ -11,7 +11,9 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +21,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -142,6 +147,32 @@ public class ModelerController {
         }
         logger.info("流程部署出参map：{}", map);
         return map;
+    }
+
+    @RequestMapping("/viewPng")
+    public String viewPng(String modelId, Map<String, Object> valueMap) throws IOException {
+        logger.info("查看流程图入参modelId：{}", modelId);
+        Model modelData = repositoryService.getModel(modelId);
+        // 模型可以被部署多次,但永远只会绑定一个deploymentId
+        String deploymentId = modelData.getDeploymentId();
+        valueMap.put("result", "success");
+        if (StringUtils.isBlank(deploymentId)) {
+            logger.info("模型：{}未发布，无法查看流程图", modelId);
+            valueMap.put("result", "fail");
+            return "viewPng";
+        }
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(deploymentId).singleResult();
+        InputStream inputStream = repositoryService.getProcessDiagram(processDefinition.getId());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024 * 4];
+        int n = 0;
+        while (-1 != (n = inputStream.read(buffer))) {
+            output.write(buffer, 0, n);
+        }
+        BASE64Encoder encoder = new BASE64Encoder();
+        String base64Result = encoder.encode(output.toByteArray());
+        valueMap.put("base64Result", base64Result);
+        return "viewPng";
     }
 
     /**
