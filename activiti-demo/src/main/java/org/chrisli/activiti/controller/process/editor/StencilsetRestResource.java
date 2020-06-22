@@ -1,4 +1,4 @@
-package org.chrisli.activiti.controller.editor;
+package org.chrisli.activiti.controller.process.editor;
 
 import org.activiti.engine.ActivitiException;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +25,7 @@ public class StencilsetRestResource {
     @RequestMapping(value = "/editor/stencilset", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     @ResponseBody
     public String getStencilset() {
-        InputStream stencilsetStream = this.getClass().getClassLoader().getResourceAsStream("stencilset.json");
+        InputStream stencilsetStream = this.getClass().getClassLoader().getResourceAsStream("static/stencilset.json");
         try {
             return IOUtils.toString(stencilsetStream, "utf-8");
         } catch (Exception e) {

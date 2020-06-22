@@ -1,4 +1,4 @@
-package org.chrisli.activiti.controller.editor;
+package org.chrisli.activiti.controller.process.editor;
 
 import org.activiti.editor.constants.ModelDataJsonConstants;
 import org.activiti.engine.ActivitiException;

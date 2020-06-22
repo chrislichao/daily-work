@@ -1,4 +1,4 @@
-package org.chrisli.activiti.controller;
+package org.chrisli.activiti.controller.process;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -163,7 +163,6 @@ public class ModelerController {
         InputStream pngInputStream = repositoryService.getProcessDiagram(processDefinition.getId());
         InputStream xmlInputStream = repositoryService.getResourceAsStream(deploymentId, processDefinition.getResourceName());
         ByteArrayOutputStream imgOutput = new ByteArrayOutputStream();
-        ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
         File pngFile = new File("C:/ChrisLi/" + processDefinition.getName() + ".png");
         File xmlFile = new File("C:/ChrisLi/" + processDefinition.getName() + ".bpmn20.xml");
         BufferedOutputStream pngOutputStream = new BufferedOutputStream(new FileOutputStream(pngFile));

@@ -1,5 +1,6 @@
 package org.chrisli.activiti;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @create [2017-04-12]
  */
 @SpringBootApplication
+@MapperScan("org.chrisli.activiti.dao")
 public class ActivitiMainApplication {
     /**
      * [SpringBoot启动的方法]

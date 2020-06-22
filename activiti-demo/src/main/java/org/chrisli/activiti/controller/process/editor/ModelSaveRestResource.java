@@ -1,4 +1,4 @@
-package org.chrisli.activiti.controller.editor;
+package org.chrisli.activiti.controller.process.editor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
