@@ -13,8 +13,8 @@ public class SysBillsVo {
     private String billsTypeName;
     private String billsStatusName;
     private String billsCode;
-    private String createByName;
-    private Date createOn;
+    private String createdByName;
+    private Date createdOn;
 
     public Long getId() {
         return id;
@@ -48,19 +48,19 @@ public class SysBillsVo {
         this.billsCode = billsCode;
     }
 
-    public String getCreateByName() {
-        return createByName;
+    public String getCreatedByName() {
+        return createdByName;
     }
 
-    public void setCreateByName(String createByName) {
-        this.createByName = createByName;
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
     }
 
-    public Date getCreateOn() {
-        return createOn;
+    public Date getCreatedOn() {
+        return createdOn;
     }
 
-    public void setCreateOn(Date createOn) {
-        this.createOn = createOn;
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
     }
 }

@@ -1,5 +1,7 @@
 package org.chrisli.activiti.domain;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * @author Chris Li[黎超]
  * @create [2020-06-22]
  */
-public class SysApplyBillsDO {
+public class SysApplyBillsDO extends BaseDO {
     private Long id;
     private Integer billsType;
     private Integer billsStatus;

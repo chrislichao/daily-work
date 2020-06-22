@@ -66,4 +66,22 @@
 			<include refid="MybatisSysApplyBillsDAO_dynamic_where_order_policy" />
  	</select>
 
+	<select id="selectDynamicCount" resultType="long" parameterType="org.chrisli.activiti.domain.SysApplyBillsDO">
+		SELECT
+			count(1)
+		FROM
+			SYS_APPLY_BILLS
+			<include refid="MybatisSysApplyBillsDAO_dynamic_where_fields" />
+	</select>
+
+	<select id="selectDynamicPageQuery" resultMap="SysApplyBillsDOResultMap" parameterType="org.chrisli.activiti.domain.SysApplyBillsDO">
+		SELECT
+			<include refid="MybatisSysApplyBillsDAO_all_column_fields" />
+		FROM
+			SYS_APPLY_BILLS
+			<include refid="MybatisSysApplyBillsDAO_dynamic_where_fields" />
+			<include refid="MybatisSysApplyBillsDAO_dynamic_where_order_policy" />
+			Limit #{start}, #{pageSize}
+	</select>
+
 </mapper>
