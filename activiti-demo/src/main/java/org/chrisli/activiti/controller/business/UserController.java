@@ -1,5 +1,6 @@
 package org.chrisli.activiti.controller.business;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
@@ -59,6 +60,7 @@ public class UserController {
         if (request == null) {
             return ResponseBaseVo.fail("XXXX", "XXXX");
         }
+        logger.info("用户分页查询申请单,参数:{}", JSON.toJSONString(request));
         if (request.getStartPage() <= 0 || request.getPageSize() <= 0) {
             return ResponseBaseVo.fail("XXXX", "XXXX");
         }
