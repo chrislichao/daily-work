@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -162,15 +160,31 @@ public class ModelerController {
             return "viewPng";
         }
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(deploymentId).singleResult();
-        InputStream inputStream = repositoryService.getProcessDiagram(processDefinition.getId());
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024 * 4];
-        int n = 0;
-        while (-1 != (n = inputStream.read(buffer))) {
-            output.write(buffer, 0, n);
+        InputStream pngInputStream = repositoryService.getProcessDiagram(processDefinition.getId());
+        InputStream xmlInputStream = repositoryService.getResourceAsStream(deploymentId, processDefinition.getResourceName());
+        ByteArrayOutputStream imgOutput = new ByteArrayOutputStream();
+        ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
+        File pngFile = new File("C:/ChrisLi/" + processDefinition.getName() + ".png");
+        File xmlFile = new File("C:/ChrisLi/" + processDefinition.getName() + ".bpmn20.xml");
+        BufferedOutputStream pngOutputStream = new BufferedOutputStream(new FileOutputStream(pngFile));
+        BufferedOutputStream xmlOutputStream = new BufferedOutputStream(new FileOutputStream(xmlFile));
+        int len = 0;
+        byte[] buffer = new byte[1024];
+        while ((len = pngInputStream.read(buffer)) != -1) {
+            imgOutput.write(buffer, 0, len);
+            pngOutputStream.write(buffer, 0, len);
+            pngOutputStream.flush();
         }
+        pngOutputStream.close();
+        pngInputStream.close();
+
+        while ((len = xmlInputStream.read(buffer)) != -1) {
+            xmlOutputStream.write(buffer, 0, len);
+            xmlOutputStream.flush();
+        }
+
         BASE64Encoder encoder = new BASE64Encoder();
-        String base64Result = encoder.encode(output.toByteArray());
+        String base64Result = encoder.encode(imgOutput.toByteArray());
         valueMap.put("base64Result", base64Result);
         return "viewPng";
     }
