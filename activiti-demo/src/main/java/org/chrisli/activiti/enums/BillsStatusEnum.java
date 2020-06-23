@@ -1,10 +1,10 @@
 package org.chrisli.activiti.enums;
 
 public enum BillsStatusEnum {
-    DRAFT(0, "草稿"),
-    ING(1, "进行中"),
+    DRAFT(0, "草稿单"),
+    ING(1, "审批中"),
     COMPLETE(2, "已完成"),
-    GIVE_UP(3, "放弃");
+    GIVE_UP(3, "已放弃");
 
     BillsStatusEnum(Integer value, String name) {
         this.value = value;
