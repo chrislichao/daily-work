@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.chrisli.activiti.dao.SysUserMapper">
+
+	<resultMap type="org.chrisli.activiti.domain.SysUserDO" id="SysUserDOResultMap">
+		<id column="id" property="id" />
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+	</resultMap>
+
+	<sql id="MybatisSysUserDAO_all_column_fields">
+	      id,code,name
+ 	</sql>
+
+	<!-- 只有varchar char text类型 做 !='' 判断，生成代码时,其他类型时只做!=null 决断 0或fasle与空''是相同的，在mybatis中的动态语句中 -->
+	<sql id="MybatisSysUserDAO_dynamic_where_fields"><!-- xml转义字符需要 <![CDATA[   ]]> 标签-->
+		<where>
+			<if test="code != null "> AND code = #{code} </if>
+			<if test="name != null "> AND name = #{name} </if>
+		</where>
+ 	</sql>
+
+	<sql id="MybatisSysUserDAO_dynamic_where_order_policy">
+		<if test="orderPolicyList != null and orderPolicyList.size() > 0 ">
+			<foreach item="item" index="index" collection="orderPolicyList" open=" order by "
+					 separator="," close="">
+				${item.column} ${item.policy}
+			</foreach>
+		</if>
+	</sql>
+
+    <insert id="insert" parameterType="org.chrisli.activiti.domain.SysUserDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO SYS_USER (
+				code,
+				name
+		) values (
+				#{code},
+				#{name}
+		)
+    </insert>
+
+ 	<select id="selectDynamic" resultMap="SysUserDOResultMap" parameterType="org.chrisli.activiti.domain.SysUserDO">
+	     SELECT
+	     	<include refid="MybatisSysUserDAO_all_column_fields" />
+		 FROM
+			SYS_USER
+			<include refid="MybatisSysUserDAO_dynamic_where_fields" />
+			<include refid="MybatisSysUserDAO_dynamic_where_order_policy" />
+ 	</select>
+
+	<select id="selectDynamicCount" resultType="long" parameterType="org.chrisli.activiti.domain.SysUserDO">
+		SELECT
+			count(1)
+		FROM
+			SYS_USER
+			<include refid="MybatisSysUserDAO_dynamic_where_fields" />
+	</select>
+
+	<select id="selectDynamicPageQuery" resultMap="SysUserDOResultMap" parameterType="org.chrisli.activiti.domain.SysUserDO">
+		SELECT
+			<include refid="MybatisSysUserDAO_all_column_fields" />
+		FROM
+			SYS_USER
+			<include refid="MybatisSysUserDAO_dynamic_where_fields" />
+			<include refid="MybatisSysUserDAO_dynamic_where_order_policy" />
+			Limit #{start}, #{pageSize}
+	</select>
+
+</mapper>

@@ -38,7 +38,7 @@
 	</sql>
 
     <insert id="insert" parameterType="org.chrisli.activiti.domain.SysApplyBillsDO" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO SYS_APPLY_BILLS(
+        INSERT INTO SYS_APPLY_BILLS (
 				bills_type,
 				bills_status,
 				bills_code,
@@ -56,6 +56,15 @@
 				#{createdBy}
 		)
     </insert>
+
+	<select id="selectById" parameterType="long" resultMap="SysApplyBillsDOResultMap">
+		SELECT
+			<include refid="MybatisSysApplyBillsDAO_all_column_fields" />
+		FROM
+			SYS_APPLY_BILLS
+		WHERE
+			id = #{id}
+	</select>
 
  	<select id="selectDynamic" resultMap="SysApplyBillsDOResultMap" parameterType="org.chrisli.activiti.domain.SysApplyBillsDO">
 	     SELECT

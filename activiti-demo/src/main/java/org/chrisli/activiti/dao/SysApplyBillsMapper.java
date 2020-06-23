@@ -7,9 +7,11 @@ import java.util.List;
 public interface SysApplyBillsMapper {
     Long insert(SysApplyBillsDO sysApplyBillsDO);
 
+    SysApplyBillsDO selectById(Long id);
+
     List<SysApplyBillsDO> selectDynamic(SysApplyBillsDO sysApplyBillsDO);
 
-    List<SysApplyBillsDO> selectDynamicPageQuery(SysApplyBillsDO queryBill);
+    List<SysApplyBillsDO> selectDynamicPageQuery(SysApplyBillsDO sysApplyBillsDO);
 
-    Long selectDynamicCount(SysApplyBillsDO queryBill);
+    Long selectDynamicCount(SysApplyBillsDO sysApplyBillsDO);
 }

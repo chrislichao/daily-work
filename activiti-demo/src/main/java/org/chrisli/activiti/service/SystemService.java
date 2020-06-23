@@ -3,9 +3,13 @@ package org.chrisli.activiti.service;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.collections4.CollectionUtils;
 import org.chrisli.activiti.dao.SysApplyBillsMapper;
+import org.chrisli.activiti.dao.SysRoleMapper;
 import org.chrisli.activiti.dao.SysUserMapper;
+import org.chrisli.activiti.dao.SysUserRoleMapper;
 import org.chrisli.activiti.domain.OrderPolicyDO;
 import org.chrisli.activiti.domain.SysApplyBillsDO;
+import org.chrisli.activiti.domain.SysRoleDO;
+import org.chrisli.activiti.domain.SysUserRoleDO;
 import org.chrisli.activiti.enums.BillsStatusEnum;
 import org.chrisli.activiti.enums.BillsTypeEnum;
 import org.chrisli.activiti.enums.OrderColumnEnum;
@@ -28,6 +32,12 @@ public class SystemService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
 
     @Autowired
     private SysApplyBillsMapper sysApplyBillsMapper;
@@ -71,6 +81,16 @@ public class SystemService {
         return page;
     }
 
+    public SysBillsVo getSysBillsVoById(Long sysBillsId) {
+        SysApplyBillsDO sysApplyBillsDO = sysApplyBillsMapper.selectById(sysBillsId);
+        SysBillsVo sysBillsVo = new SysBillsVo();
+        BeanUtils.copyProperties(sysApplyBillsDO, sysBillsVo);
+        sysBillsVo.setCreatedByName("user:" + sysApplyBillsDO.getCreatedBy());
+        sysBillsVo.setBillsTypeName(BillsTypeEnum.getMatchedItemByValue(sysApplyBillsDO.getBillsType()).getName());
+        sysBillsVo.setBillsStatusName(BillsStatusEnum.getMatchedItemByValue(sysApplyBillsDO.getBillsStatus()).getName());
+        return sysBillsVo;
+    }
+
     public SysBillsVo createDraftBill(Long userId, BillsTypeEnum billsTypeEnum, ProcessDefinition processDefinition) {
         SysApplyBillsDO sysApplyBillsDO = new SysApplyBillsDO();
         sysApplyBillsDO.setBillsType(billsTypeEnum.getValue());
@@ -89,4 +109,13 @@ public class SystemService {
         return sysBillsVo;
     }
 
+    public List<SysRoleDO> getRoleListByUserId(Long userId) {
+        SysUserRoleDO sysUserRoleDO = new SysUserRoleDO();
+        sysUserRoleDO.setUserId(userId);
+        List<SysUserRoleDO> sysUserRoleDOList = sysUserRoleMapper.selectDynamic(sysUserRoleDO);
+        List<Long> roleIdList = sysUserRoleDOList.stream().map(SysUserRoleDO::getRoleId).collect(Collectors.toList());
+        SysRoleDO sysRoleDO = new SysRoleDO();
+        sysRoleDO.setRoleIdList(roleIdList);
+        return sysRoleMapper.selectDynamic(sysRoleDO);
+    }
 }
