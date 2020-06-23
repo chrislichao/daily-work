@@ -9,6 +9,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.chrisli.activiti.domain.SysApplyBillsDO;
 import org.chrisli.activiti.domain.SysRoleDO;
 import org.chrisli.activiti.enums.ActionTypeEnum;
@@ -139,7 +140,7 @@ public class UserController {
         }
         // 获取当前用户的角色
         List<SysRoleDO> sysRoleDOList = systemService.getRoleListByUserId(userId);
-        List<String> roleCodeList = sysRoleDOList.stream().map(item -> "RodeCode:" + item.getCode()).collect(Collectors.toList());
+        List<String> roleCodeList = sysRoleDOList.stream().map(item -> "RoleCode:" + item.getCode()).collect(Collectors.toList());
 
         // 当前存在两种任务:用户任务,角色任务
         List<Task> userTaskList = taskService.createTaskQuery().taskAssignee(userId.toString()).list();
@@ -206,10 +207,12 @@ public class UserController {
         actionMap.put("actionType", actionTypeEnum.getValue());
         taskService.complete(task.getId(), actionMap);
         String extPropertyJson = task.getFormKey();
-        ExtPropertyVo extPropertyVo = JSON.parseObject(extPropertyJson, ExtPropertyVo.class);
-        if (extPropertyVo.getTaskType() != null) {
-            if (TaskTypeEnum.SUBMIT_TASK.getValue().equals(extPropertyVo.getTaskType())) {
-                systemService.updateBillsStatus(sysApplyBillsDO.getId(), BillsStatusEnum.ING);
+        if (StringUtils.isNotBlank(extPropertyJson)) {
+            ExtPropertyVo extPropertyVo = JSON.parseObject(extPropertyJson, ExtPropertyVo.class);
+            if (extPropertyVo.getTaskType() != null) {
+                if (TaskTypeEnum.SUBMIT_TASK.getValue().equals(extPropertyVo.getTaskType())) {
+                    systemService.updateBillsStatus(sysApplyBillsDO.getId(), BillsStatusEnum.ING);
+                }
             }
         }
         return ResponseBaseVo.ok();
