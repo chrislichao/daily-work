@@ -52,7 +52,7 @@
 				#{billsType},
 				#{billsStatus},
 				#{billsCode},
-				#{prodefId},
+				#{processDefinitionId},
 				#{deploymentId},
 				#{processInstanceId},
 				now(),
@@ -63,6 +63,7 @@
 	<update id="updateDynamic" parameterType="org.chrisli.activiti.domain.SysApplyBillsDO">
 		UPDATE SYS_APPLY_BILLS
 		<set>
+			<if test="billsStatus != null ">bills_status = #{billsStatus},</if>
 			<if test="processInstanceId != null ">process_instance_id = #{processInstanceId},</if>
 		</set>
 		<where>

@@ -70,6 +70,7 @@ public class SystemService {
         List<SysBillsVo> sysBillsVoList = sysApplyBillsDOList.stream().map(item -> {
             SysBillsVo sysBillsVo = new SysBillsVo();
             BeanUtils.copyProperties(item, sysBillsVo);
+            sysBillsVo.setBillsId(item.getId());
             sysBillsVo.setCreatedByName("user:" + item.getCreatedBy());
             sysBillsVo.setBillsTypeName(BillsTypeEnum.getMatchedItemByValue(item.getBillsType()).getName());
             sysBillsVo.setBillsStatusName(BillsStatusEnum.getMatchedItemByValue(item.getBillsStatus()).getName());
@@ -90,6 +91,7 @@ public class SystemService {
         SysApplyBillsDO sysApplyBillsDO = sysApplyBillsMapper.selectById(sysBillsId);
         SysBillsVo sysBillsVo = new SysBillsVo();
         BeanUtils.copyProperties(sysApplyBillsDO, sysBillsVo);
+        sysBillsVo.setBillsId(sysApplyBillsDO.getId());
         sysBillsVo.setCreatedByName("user:" + sysApplyBillsDO.getCreatedBy());
         sysBillsVo.setBillsTypeName(BillsTypeEnum.getMatchedItemByValue(sysApplyBillsDO.getBillsType()).getName());
         sysBillsVo.setBillsStatusName(BillsStatusEnum.getMatchedItemByValue(sysApplyBillsDO.getBillsStatus()).getName());
@@ -107,6 +109,7 @@ public class SystemService {
         sysApplyBillsMapper.insert(sysApplyBillsDO);
         SysBillsVo sysBillsVo = new SysBillsVo();
         BeanUtils.copyProperties(sysApplyBillsDO, sysBillsVo);
+        sysBillsVo.setBillsId(sysApplyBillsDO.getId());
         sysBillsVo.setBillsTypeName(billsTypeEnum.getName());
         sysBillsVo.setBillsStatusName(BillsStatusEnum.DRAFT.getName());
         sysBillsVo.setCreatedByName("User:" + userId);
@@ -148,5 +151,12 @@ public class SystemService {
             return false;
         }
         return assignee.equals(userId.toString());
+    }
+
+    public void updateBillsStatus(Long billsId, BillsStatusEnum toStatus) {
+        SysApplyBillsDO sysApplyBillsDO = new SysApplyBillsDO();
+        sysApplyBillsDO.setId(billsId);
+        sysApplyBillsDO.setBillsStatus(toStatus.getValue());
+        sysApplyBillsMapper.updateDynamic(sysApplyBillsDO);
     }
 }

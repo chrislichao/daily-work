@@ -12,13 +12,16 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.chrisli.activiti.domain.SysApplyBillsDO;
 import org.chrisli.activiti.domain.SysRoleDO;
 import org.chrisli.activiti.enums.ActionTypeEnum;
+import org.chrisli.activiti.enums.BillsStatusEnum;
 import org.chrisli.activiti.enums.BillsTypeEnum;
+import org.chrisli.activiti.enums.TaskTypeEnum;
 import org.chrisli.activiti.request.TaskRequest;
 import org.chrisli.activiti.request.UserRequest;
 import org.chrisli.activiti.service.SystemService;
 import org.chrisli.activiti.view.Page;
 import org.chrisli.activiti.view.RequestBaseVo;
 import org.chrisli.activiti.view.ResponseBaseVo;
+import org.chrisli.activiti.vo.ExtPropertyVo;
 import org.chrisli.activiti.vo.SysBillsVo;
 import org.chrisli.activiti.vo.TaskVo;
 import org.slf4j.Logger;
@@ -110,8 +113,8 @@ public class UserController {
         Map<String, Object> valusMap = new HashMap<>();
         valusMap.put("user", request.getUserId().toString());
         // 启动审批流程
-        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinition.getId(), sysBillsVo.getId().toString(), valusMap);
-        boolean result = systemService.setProcessInstanceId(sysBillsVo.getId(), processInstance.getId());
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinition.getId(), sysBillsVo.getBillsId().toString(), valusMap);
+        boolean result = systemService.setProcessInstanceId(sysBillsVo.getBillsId(), processInstance.getId());
         if (!result) {
             return ResponseBaseVo.fail("xxxxx", "单据创建失败！");
         }
@@ -202,6 +205,13 @@ public class UserController {
         Map<String, Object> actionMap = new HashMap<>();
         actionMap.put("actionType", actionTypeEnum.getValue());
         taskService.complete(task.getId(), actionMap);
+        String extPropertyJson = task.getFormKey();
+        ExtPropertyVo extPropertyVo = JSON.parseObject(extPropertyJson, ExtPropertyVo.class);
+        if (extPropertyVo.getTaskType() != null) {
+            if (TaskTypeEnum.SUBMIT_TASK.getValue().equals(extPropertyVo.getTaskType())) {
+                systemService.updateBillsStatus(sysApplyBillsDO.getId(), BillsStatusEnum.ING);
+            }
+        }
         return ResponseBaseVo.ok();
     }
 }

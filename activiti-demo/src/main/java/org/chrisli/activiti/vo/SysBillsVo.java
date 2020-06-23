@@ -9,19 +9,19 @@ import java.util.Date;
  * @create [2020-06-22]
  */
 public class SysBillsVo {
-    private Long id;
+    private Long billsId;
     private String billsTypeName;
     private String billsStatusName;
     private String billsCode;
     private String createdByName;
     private Date createdOn;
 
-    public Long getId() {
-        return id;
+    public Long getBillsId() {
+        return billsId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBillsId(Long billsId) {
+        this.billsId = billsId;
     }
 
     public String getBillsTypeName() {
