@@ -8,14 +8,15 @@
         <result column="bills_type" property="billsType"/>
         <result column="bills_status" property="billsStatus"/>
         <result column="bills_code" property="billsCode"/>
-        <result column="prodef_id" property="prodefId"/>
+        <result column="process_definition_id" property="processDefinitionId"/>
         <result column="deployment_id" property="deploymentId"/>
+        <result column="process_instance_id" property="processInstanceId"/>
         <result column="created_on" property="createdOn"/>
         <result column="created_by" property="createdBy"/>
 	</resultMap>
 
 	<sql id="MybatisSysApplyBillsDAO_all_column_fields">
-	      id,bills_type,bills_status,bills_code,prodef_id,deployment_id,created_on,created_by
+	      id,bills_type,bills_status,bills_code,process_definition_id,deployment_id,process_instance_id,created_on,created_by
  	</sql>
 
 	<!-- 只有varchar char text类型 做 !='' 判断，生成代码时,其他类型时只做!=null 决断 0或fasle与空''是相同的，在mybatis中的动态语句中 -->
@@ -42,8 +43,9 @@
 				bills_type,
 				bills_status,
 				bills_code,
-				prodef_id,
+				process_definition_id,
 				deployment_id,
+				process_instance_id,
 				created_on,
 				created_by
 		) values (
@@ -52,10 +54,27 @@
 				#{billsCode},
 				#{prodefId},
 				#{deploymentId},
+				#{processInstanceId},
 				now(),
 				#{createdBy}
 		)
     </insert>
+
+	<update id="updateDynamic" parameterType="org.chrisli.activiti.domain.SysApplyBillsDO">
+		UPDATE SYS_APPLY_BILLS
+		<set>
+			<if test="processInstanceId != null ">process_instance_id = #{processInstanceId},</if>
+		</set>
+		<where>
+			<choose>
+				<when test="id != null">
+					id = #{id}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+		</where>
+	</update>
 
 	<select id="selectById" parameterType="long" resultMap="SysApplyBillsDOResultMap">
 		SELECT

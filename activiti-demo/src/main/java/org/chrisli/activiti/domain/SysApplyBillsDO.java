@@ -15,8 +15,9 @@ public class SysApplyBillsDO extends BaseDO {
     private Integer billsType;
     private Integer billsStatus;
     private String billsCode;
-    private String prodefId;
+    private String processDefinitionId;
     private String deploymentId;
+    private String processInstanceId;
     private Long createdBy;
     private Date createdOn;
 
@@ -52,12 +53,12 @@ public class SysApplyBillsDO extends BaseDO {
         this.billsCode = billsCode;
     }
 
-    public String getProdefId() {
-        return prodefId;
+    public String getProcessDefinitionId() {
+        return processDefinitionId;
     }
 
-    public void setProdefId(String prodefId) {
-        this.prodefId = prodefId;
+    public void setProcessDefinitionId(String processDefinitionId) {
+        this.processDefinitionId = processDefinitionId;
     }
 
     public String getDeploymentId() {
@@ -66,6 +67,14 @@ public class SysApplyBillsDO extends BaseDO {
 
     public void setDeploymentId(String deploymentId) {
         this.deploymentId = deploymentId;
+    }
+
+    public String getProcessInstanceId() {
+        return processInstanceId;
+    }
+
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
     }
 
     public Long getCreatedBy() {

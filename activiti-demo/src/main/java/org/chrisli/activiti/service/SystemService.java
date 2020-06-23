@@ -1,6 +1,7 @@
 package org.chrisli.activiti.service;
 
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.task.Task;
 import org.apache.commons.collections4.CollectionUtils;
 import org.chrisli.activiti.dao.SysApplyBillsMapper;
 import org.chrisli.activiti.dao.SysRoleMapper;
@@ -81,6 +82,10 @@ public class SystemService {
         return page;
     }
 
+    public SysApplyBillsDO getSysApplyBillsDOById(Long sysBillsId) {
+        return sysApplyBillsMapper.selectById(sysBillsId);
+    }
+
     public SysBillsVo getSysBillsVoById(Long sysBillsId) {
         SysApplyBillsDO sysApplyBillsDO = sysApplyBillsMapper.selectById(sysBillsId);
         SysBillsVo sysBillsVo = new SysBillsVo();
@@ -96,7 +101,7 @@ public class SystemService {
         sysApplyBillsDO.setBillsType(billsTypeEnum.getValue());
         sysApplyBillsDO.setBillsStatus(BillsStatusEnum.DRAFT.getValue());
         sysApplyBillsDO.setBillsCode(generateBillsCode(billsTypeEnum));
-        sysApplyBillsDO.setProdefId(processDefinition.getId());
+        sysApplyBillsDO.setProcessDefinitionId(processDefinition.getId());
         sysApplyBillsDO.setDeploymentId(processDefinition.getDeploymentId());
         sysApplyBillsDO.setCreatedBy(userId);
         sysApplyBillsMapper.insert(sysApplyBillsDO);
@@ -109,6 +114,14 @@ public class SystemService {
         return sysBillsVo;
     }
 
+    public boolean setProcessInstanceId(Long billsId, String processInstanceId) {
+        SysApplyBillsDO sysApplyBillsDO = new SysApplyBillsDO();
+        sysApplyBillsDO.setId(billsId);
+        sysApplyBillsDO.setProcessInstanceId(processInstanceId);
+        Integer effectedCount = sysApplyBillsMapper.updateDynamic(sysApplyBillsDO);
+        return effectedCount.intValue() == 1;
+    }
+
     public List<SysRoleDO> getRoleListByUserId(Long userId) {
         SysUserRoleDO sysUserRoleDO = new SysUserRoleDO();
         sysUserRoleDO.setUserId(userId);
@@ -117,5 +130,23 @@ public class SystemService {
         SysRoleDO sysRoleDO = new SysRoleDO();
         sysRoleDO.setRoleIdList(roleIdList);
         return sysRoleMapper.selectDynamic(sysRoleDO);
+    }
+
+    public boolean validateAuth(Long userId, SysApplyBillsDO sysApplyBillsDO, Task task) {
+        if (!sysApplyBillsDO.getProcessDefinitionId().equals(task.getProcessDefinitionId()) || !sysApplyBillsDO.getProcessInstanceId().equals(task.getProcessInstanceId())) {
+            return false;
+        }
+        String assignee = task.getAssignee();
+        if (assignee.startsWith("RoleCode:")) {
+            String needRole = assignee.substring(9);
+            List<SysRoleDO> sysRoleDOList = getRoleListByUserId(userId);
+            for (SysRoleDO sysRoleDO : sysRoleDOList) {
+                if (needRole.equalsIgnoreCase(sysRoleDO.getCode())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return assignee.equals(userId.toString());
     }
 }

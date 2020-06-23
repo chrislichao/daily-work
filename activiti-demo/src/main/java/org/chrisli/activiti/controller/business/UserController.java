@@ -9,8 +9,11 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.collections4.CollectionUtils;
+import org.chrisli.activiti.domain.SysApplyBillsDO;
 import org.chrisli.activiti.domain.SysRoleDO;
+import org.chrisli.activiti.enums.ActionTypeEnum;
 import org.chrisli.activiti.enums.BillsTypeEnum;
+import org.chrisli.activiti.request.TaskRequest;
 import org.chrisli.activiti.request.UserRequest;
 import org.chrisli.activiti.service.SystemService;
 import org.chrisli.activiti.view.Page;
@@ -107,7 +110,11 @@ public class UserController {
         Map<String, Object> valusMap = new HashMap<>();
         valusMap.put("user", request.getUserId().toString());
         // 启动审批流程
-        runtimeService.startProcessInstanceById(processDefinition.getId(), sysBillsVo.getId().toString(), valusMap);
+        ProcessInstance processInstance = runtimeService.startProcessInstanceById(processDefinition.getId(), sysBillsVo.getId().toString(), valusMap);
+        boolean result = systemService.setProcessInstanceId(sysBillsVo.getId(), processInstance.getId());
+        if (!result) {
+            return ResponseBaseVo.fail("xxxxx", "单据创建失败！");
+        }
         return ResponseBaseVo.ok(sysBillsVo);
     }
 
@@ -118,8 +125,8 @@ public class UserController {
      * @create [2020/6/22]
      */
     @RequestMapping(value = "/getMyTaskList")
-    public ResponseBaseVo<List<TaskVo>> getMyTaskList(@RequestBody RequestBaseVo<UserRequest> requestVo) {
-        UserRequest request = requestVo.getParam();
+    public ResponseBaseVo<List<TaskVo>> getMyTaskList(@RequestBody RequestBaseVo<TaskRequest> requestVo) {
+        TaskRequest request = requestVo.getParam();
         if (request == null) {
             return ResponseBaseVo.fail("XXXX", "XXXX");
         }
@@ -144,6 +151,7 @@ public class UserController {
             SysBillsVo sysBillsVo = systemService.getSysBillsVoById(Long.valueOf(businessKey));
 
             TaskVo taskVo = new TaskVo();
+            taskVo.setTaskId(item.getId());
             taskVo.setTaskKey(item.getTaskDefinitionKey());
             taskVo.setTaskName(item.getName());
             BeanUtils.copyProperties(sysBillsVo, taskVo);
@@ -153,13 +161,47 @@ public class UserController {
     }
 
     /**
-     * [提交申请单]
+     * [完成任务]
      *
      * @author Chris Li[黎超]
      * @create [2020/6/22]
      */
-    @RequestMapping(value = "/submitBill")
-    public ResponseBaseVo<SysBillsVo> submitBill(@RequestBody RequestBaseVo<UserRequest> requestVo) {
+    @RequestMapping(value = "/completeTask")
+    public ResponseBaseVo<SysBillsVo> completeTask(@RequestBody RequestBaseVo<TaskRequest> requestVo) {
+        TaskRequest request = requestVo.getParam();
+        if (request == null) {
+            return ResponseBaseVo.fail("XXXX", "XXXX");
+        }
+        Long userId = request.getUserId();
+        if (userId == null) {
+            return ResponseBaseVo.fail("xxxxx", "用户不允许为空！");
+        }
+        if (request.getBillsId() == null) {
+            return ResponseBaseVo.fail("xxxxx", "申请单不允许为空！");
+        }
+        if (request.getTaskId() == null) {
+            return ResponseBaseVo.fail("xxxxx", "任务不允许为空！");
+        }
+        if (request.getActionType() == null) {
+            return ResponseBaseVo.fail("xxxxx", "操作类型不允许为空！");
+        }
+        ActionTypeEnum actionTypeEnum = ActionTypeEnum.getMatchedItemByValue(request.getActionType());
+        SysApplyBillsDO sysApplyBillsDO = systemService.getSysApplyBillsDOById(request.getBillsId());
+        if (sysApplyBillsDO == null) {
+            return ResponseBaseVo.fail("xxxxx", "当前操作的申请单不存在！");
+        }
+        Task task = taskService.createTaskQuery().taskId(request.getTaskId()).singleResult();
+        if (task == null) {
+            return ResponseBaseVo.fail("xxxx", "当前任务不存在！");
+        }
+        // 校验权限
+        boolean result = systemService.validateAuth(userId, sysApplyBillsDO, task);
+        if (!result) {
+            return ResponseBaseVo.fail("xxxx", "您无权操作此申请单！");
+        }
+        Map<String, Object> actionMap = new HashMap<>();
+        actionMap.put("actionType", actionTypeEnum.getValue());
+        taskService.complete(task.getId(), actionMap);
         return ResponseBaseVo.ok();
     }
 }

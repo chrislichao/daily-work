@@ -7,8 +7,17 @@ package org.chrisli.activiti.vo;
  * @create [2020-06-23]
  */
 public class TaskVo extends SysBillsVo {
+    private String taskId;
     private String taskName;
     private String taskKey;
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
     public String getTaskName() {
         return taskName;

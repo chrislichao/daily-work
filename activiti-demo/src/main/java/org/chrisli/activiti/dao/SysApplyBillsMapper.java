@@ -7,6 +7,8 @@ import java.util.List;
 public interface SysApplyBillsMapper {
     Long insert(SysApplyBillsDO sysApplyBillsDO);
 
+    Integer updateDynamic(SysApplyBillsDO sysApplyBillsDO);
+
     SysApplyBillsDO selectById(Long id);
 
     List<SysApplyBillsDO> selectDynamic(SysApplyBillsDO sysApplyBillsDO);
