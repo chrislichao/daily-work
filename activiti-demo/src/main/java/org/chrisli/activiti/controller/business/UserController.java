@@ -23,6 +23,7 @@ import org.chrisli.activiti.view.Page;
 import org.chrisli.activiti.view.RequestBaseVo;
 import org.chrisli.activiti.view.ResponseBaseVo;
 import org.chrisli.activiti.vo.ExtPropertyVo;
+import org.chrisli.activiti.vo.SysBillsActionVo;
 import org.chrisli.activiti.vo.SysBillsVo;
 import org.chrisli.activiti.vo.TaskVo;
 import org.slf4j.Logger;
@@ -215,6 +216,20 @@ public class UserController {
                 }
             }
         }
+        systemService.addActionHistory(userId, sysApplyBillsDO.getId(), actionTypeEnum, task, request.getActionComment());
         return ResponseBaseVo.ok();
+    }
+
+    @RequestMapping(value = "/getBillsActionHistory")
+    public ResponseBaseVo<List<SysBillsActionVo>> getBillsActionHistory(@RequestBody RequestBaseVo<TaskRequest> requestVo) {
+        TaskRequest request = requestVo.getParam();
+        if (request == null) {
+            return ResponseBaseVo.fail("XXXX", "XXXX");
+        }
+        if (request.getBillsId() == null) {
+            return ResponseBaseVo.fail("xxxxx", "申请单不允许为空！");
+        }
+        List<SysBillsActionVo> sysBillsActionVoList = systemService.getBillsActionHistory(request.getBillsId());
+        return ResponseBaseVo.ok(sysBillsActionVoList);
     }
 }

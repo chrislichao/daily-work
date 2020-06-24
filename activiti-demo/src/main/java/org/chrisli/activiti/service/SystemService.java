@@ -3,21 +3,13 @@ package org.chrisli.activiti.service;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.task.Task;
 import org.apache.commons.collections4.CollectionUtils;
-import org.chrisli.activiti.dao.SysApplyBillsMapper;
-import org.chrisli.activiti.dao.SysRoleMapper;
-import org.chrisli.activiti.dao.SysUserMapper;
-import org.chrisli.activiti.dao.SysUserRoleMapper;
-import org.chrisli.activiti.domain.OrderPolicyDO;
-import org.chrisli.activiti.domain.SysApplyBillsDO;
-import org.chrisli.activiti.domain.SysRoleDO;
-import org.chrisli.activiti.domain.SysUserRoleDO;
-import org.chrisli.activiti.enums.BillsStatusEnum;
-import org.chrisli.activiti.enums.BillsTypeEnum;
-import org.chrisli.activiti.enums.OrderColumnEnum;
-import org.chrisli.activiti.enums.OrderPolicyEnum;
+import org.chrisli.activiti.dao.*;
+import org.chrisli.activiti.domain.*;
+import org.chrisli.activiti.enums.*;
 import org.chrisli.activiti.request.UserRequest;
 import org.chrisli.activiti.utils.DateUtils;
 import org.chrisli.activiti.view.Page;
+import org.chrisli.activiti.vo.SysBillsActionVo;
 import org.chrisli.activiti.vo.SysBillsVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +34,9 @@ public class SystemService {
 
     @Autowired
     private SysApplyBillsMapper sysApplyBillsMapper;
+
+    @Autowired
+    private SysActionHistoryMapper sysActionHistoryMapper;
 
     private String generateBillsCode(BillsTypeEnum billsTypeEnum) {
         return billsTypeEnum.getBillsCodePreffix() + "-" + DateUtils.getCurTimestampSerial();
@@ -114,6 +109,12 @@ public class SystemService {
         sysBillsVo.setBillsStatusName(BillsStatusEnum.DRAFT.getName());
         sysBillsVo.setCreatedByName("User:" + userId);
         sysBillsVo.setCreatedOn(new Date());
+        SysActionHistoryDO sysActionHistoryDO = new SysActionHistoryDO();
+        sysActionHistoryDO.setBillsId(sysApplyBillsDO.getId());
+        sysActionHistoryDO.setActionType(ActionTypeEnum.APPROVE.getValue());
+        sysActionHistoryDO.setActionComment("创建草稿单");
+        sysActionHistoryDO.setActionBy(userId);
+        sysActionHistoryMapper.insert(sysActionHistoryDO);
         return sysBillsVo;
     }
 
@@ -153,10 +154,37 @@ public class SystemService {
         return assignee.equals(userId.toString());
     }
 
+    public void addActionHistory(Long userId, Long billsId, ActionTypeEnum actionTypeEnum, Task task, String actionComment) {
+        SysActionHistoryDO sysActionHistoryDO = new SysActionHistoryDO();
+        sysActionHistoryDO.setBillsId(billsId);
+        sysActionHistoryDO.setActionType(actionTypeEnum.getValue());
+        sysActionHistoryDO.setActionComment(actionComment);
+        sysActionHistoryDO.setTaskId(task.getId());
+        sysActionHistoryDO.setTaskName(task.getName());
+        sysActionHistoryDO.setTaskDefinitionKey(task.getTaskDefinitionKey());
+        sysActionHistoryDO.setActionBy(userId);
+        sysActionHistoryMapper.insert(sysActionHistoryDO);
+    }
+
     public void updateBillsStatus(Long billsId, BillsStatusEnum toStatus) {
         SysApplyBillsDO sysApplyBillsDO = new SysApplyBillsDO();
         sysApplyBillsDO.setId(billsId);
         sysApplyBillsDO.setBillsStatus(toStatus.getValue());
         sysApplyBillsMapper.updateDynamic(sysApplyBillsDO);
+    }
+
+    public List<SysBillsActionVo> getBillsActionHistory(Long billsId) {
+        SysActionHistoryDO sysActionHistoryDO = new SysActionHistoryDO();
+        sysActionHistoryDO.setBillsId(billsId);
+        sysActionHistoryDO.addOrderPolicy(new OrderPolicyDO(OrderColumnEnum.ACTION_ON, OrderPolicyEnum.DESC));
+        List<SysActionHistoryDO> sysActionHistoryDOList = sysActionHistoryMapper.selectDynamic(sysActionHistoryDO);
+        List<SysBillsActionVo> sysBillsActionVoList = sysActionHistoryDOList.stream().map(item -> {
+            SysBillsActionVo sysBillsActionVo = new SysBillsActionVo();
+            BeanUtils.copyProperties(item, sysBillsActionVo);
+            sysBillsActionVo.setActionTypeName(ActionTypeEnum.getMatchedItemByValue(item.getActionType()).getName());
+            sysBillsActionVo.setActionByName(item.getActionBy().toString());
+            return sysBillsActionVo;
+        }).collect(Collectors.toList());
+        return sysBillsActionVoList;
     }
 }

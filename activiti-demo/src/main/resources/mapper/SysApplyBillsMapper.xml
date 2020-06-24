@@ -11,12 +11,12 @@
         <result column="process_definition_id" property="processDefinitionId"/>
         <result column="deployment_id" property="deploymentId"/>
         <result column="process_instance_id" property="processInstanceId"/>
-        <result column="created_on" property="createdOn"/>
         <result column="created_by" property="createdBy"/>
+        <result column="created_on" property="createdOn"/>
 	</resultMap>
 
 	<sql id="MybatisSysApplyBillsDAO_all_column_fields">
-	      id,bills_type,bills_status,bills_code,process_definition_id,deployment_id,process_instance_id,created_on,created_by
+	      id,bills_type,bills_status,bills_code,process_definition_id,deployment_id,process_instance_id,created_by,created_on
  	</sql>
 
 	<!-- 只有varchar char text类型 做 !='' 判断，生成代码时,其他类型时只做!=null 决断 0或fasle与空''是相同的，在mybatis中的动态语句中 -->
@@ -46,8 +46,8 @@
 				process_definition_id,
 				deployment_id,
 				process_instance_id,
-				created_on,
-				created_by
+				created_by,
+				created_on
 		) values (
 				#{billsType},
 				#{billsStatus},
@@ -55,8 +55,8 @@
 				#{processDefinitionId},
 				#{deploymentId},
 				#{processInstanceId},
-				now(),
-				#{createdBy}
+				#{createdBy},
+				now()
 		)
     </insert>
 

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.chrisli.activiti.dao.SysActionHistoryMapper">
+
+	<resultMap type="org.chrisli.activiti.domain.SysActionHistoryDO" id="SysActionHistoryDOResultMap">
+		<id column="id" property="id" />
+        <result column="bills_id" property="billsId"/>
+        <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_definition_key" property="taskDefinitionKey"/>
+        <result column="action_type" property="actionType"/>
+        <result column="action_comment" property="actionComment"/>
+        <result column="action_by" property="actionBy"/>
+        <result column="action_on" property="actionOn"/>
+	</resultMap>
+
+	<sql id="MybatisSysActionHistoryDAO_all_column_fields">
+	      id,bills_id,task_id,task_name,task_definition_key,action_type,action_comment,action_by,action_on
+ 	</sql>
+
+	<!-- 只有varchar char text类型 做 !='' 判断，生成代码时,其他类型时只做!=null 决断 0或fasle与空''是相同的，在mybatis中的动态语句中 -->
+	<sql id="MybatisSysActionHistoryDAO_dynamic_where_fields"><!-- xml转义字符需要 <![CDATA[   ]]> 标签-->
+		<where>
+			<if test="billsId != null "> AND bills_id = #{billsId} </if>
+		</where>
+ 	</sql>
+
+	<sql id="MybatisSysActionHistoryDAO_dynamic_where_order_policy">
+		<if test="orderPolicyList != null and orderPolicyList.size() > 0 ">
+			<foreach item="item" index="index" collection="orderPolicyList" open=" order by "
+					 separator="," close="">
+				${item.column} ${item.policy}
+			</foreach>
+		</if>
+	</sql>
+
+    <insert id="insert" parameterType="org.chrisli.activiti.domain.SysActionHistoryDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO SYS_ACTION_HISTORY (
+				bills_id,
+				task_id,
+				task_name,
+				task_definition_key,
+				action_type,
+				action_comment,
+				action_by,
+				action_on
+		) values (
+				#{billsId},
+				#{taskId,jdbcType=VARCHAR},
+				#{taskName,jdbcType=VARCHAR},
+				#{taskDefinitionKey,jdbcType=VARCHAR},
+				#{actionType},
+				#{actionComment,jdbcType=VARCHAR},
+				#{actionBy},
+				now()
+		)
+    </insert>
+
+	<select id="selectById" parameterType="long" resultMap="SysActionHistoryDOResultMap">
+		SELECT
+			<include refid="MybatisSysActionHistoryDAO_all_column_fields" />
+		FROM
+			SYS_ACTION_HISTORY
+		WHERE
+			id = #{id}
+	</select>
+
+ 	<select id="selectDynamic" resultMap="SysActionHistoryDOResultMap" parameterType="org.chrisli.activiti.domain.SysActionHistoryDO">
+	     SELECT
+	     	<include refid="MybatisSysActionHistoryDAO_all_column_fields" />
+		 FROM
+			SYS_ACTION_HISTORY
+			<include refid="MybatisSysActionHistoryDAO_dynamic_where_fields" />
+			<include refid="MybatisSysActionHistoryDAO_dynamic_where_order_policy" />
+ 	</select>
+
+	<select id="selectDynamicCount" resultType="long" parameterType="org.chrisli.activiti.domain.SysActionHistoryDO">
+		SELECT
+			count(1)
+		FROM
+			SYS_ACTION_HISTORY
+			<include refid="MybatisSysActionHistoryDAO_dynamic_where_fields" />
+	</select>
+
+	<select id="selectDynamicPageQuery" resultMap="SysActionHistoryDOResultMap" parameterType="org.chrisli.activiti.domain.SysActionHistoryDO">
+		SELECT
+			<include refid="MybatisSysActionHistoryDAO_all_column_fields" />
+		FROM
+			SYS_ACTION_HISTORY
+			<include refid="MybatisSysActionHistoryDAO_dynamic_where_fields" />
+			<include refid="MybatisSysActionHistoryDAO_dynamic_where_order_policy" />
+			Limit #{start}, #{pageSize}
+	</select>
+
+</mapper>

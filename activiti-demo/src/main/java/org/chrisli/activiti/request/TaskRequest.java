@@ -11,6 +11,7 @@ public class TaskRequest extends BasePageRequest {
     private Long billsId;
     private String taskId;
     private Integer actionType;
+    private String actionComment;
 
     public Long getUserId() {
         return userId;
@@ -42,5 +43,13 @@ public class TaskRequest extends BasePageRequest {
 
     public void setActionType(Integer actionType) {
         this.actionType = actionType;
+    }
+
+    public String getActionComment() {
+        return actionComment;
+    }
+
+    public void setActionComment(String actionComment) {
+        this.actionComment = actionComment;
     }
 }

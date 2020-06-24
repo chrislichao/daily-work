@@ -10,13 +10,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
-
-/**
- * []
- *
- * @author Chris Li[黎超]
- * @create [2020-06-16]
- */
 @Configuration
 public class ActivitiConfig {
     @Autowired
