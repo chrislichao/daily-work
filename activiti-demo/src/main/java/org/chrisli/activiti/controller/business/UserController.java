@@ -8,6 +8,8 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.catalina.session.StandardSession;
+import org.apache.catalina.session.StandardSessionFacade;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.chrisli.activiti.domain.SysApplyBillsDO;
@@ -30,10 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,5 +236,15 @@ public class UserController {
         }
         List<SysBillsActionVo> sysBillsActionVoList = systemService.getBillsActionHistory(request.getBillsId());
         return ResponseBaseVo.ok(sysBillsActionVoList);
+    }
+
+    @GetMapping("/sessionTest")
+    public ResponseBaseVo<Long> sessionTest(HttpSession httpSession) throws Exception {
+        StandardSessionFacade session = (StandardSessionFacade) httpSession;
+        Class targetClass = Class.forName(session.getClass().getName());
+        Field standardSessionField = targetClass.getDeclaredField("session");
+        standardSessionField.setAccessible(true);
+        StandardSession standardSession = (StandardSession) standardSessionField.get(session);
+        return ResponseBaseVo.ok(standardSession.getManager().getSessionCounter());
     }
 }
