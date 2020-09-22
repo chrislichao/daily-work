@@ -25,7 +25,9 @@ public class ExportService {
 
     private static String WORD_NAME_FORMAT = "%s-%s数据库表结构.doc";
 
-    public void exportTableColumn(String projectName, String tableSchema, String tableSchemaDesc) {
+    private static String TEMPLATE_FILE_NAME_FORMAT = "导出模板-%s.ftl";
+
+    public void exportTableColumn(String projectName, String tableSchema, String tableSchemaDesc, String type) {
         Map<String, Object> dataMap = new HashMap<String, Object>();
         List<TableVo> tableVoList = exportMapper.getTableVoList(tableSchema);
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -38,6 +40,7 @@ public class ExportService {
         }
         dataMap.put("tableList", tableVoList);
         String wordName = String.format(WORD_NAME_FORMAT, projectName, tableSchemaDesc);
-        WordUtil.createWord(dataMap, "导出模板.ftl", "C:/ChrisLi", wordName);
+        String templateFileName = String.format(TEMPLATE_FILE_NAME_FORMAT, type);
+        WordUtil.createWord(dataMap, templateFileName, "C:/ChrisLi", wordName);
     }
 }

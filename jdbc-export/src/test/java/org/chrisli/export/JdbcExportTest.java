@@ -22,6 +22,6 @@ public class JdbcExportTest {
 
     @Test
     public void export() {
-        exportService.exportTableColumn("义乌金融供应链", "finance", "");
+        exportService.exportTableColumn("义乌金融供应链", "finance", "","B");
     }
 }
