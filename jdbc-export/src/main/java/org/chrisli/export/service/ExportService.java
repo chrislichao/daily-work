@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * [导出服务]
@@ -22,13 +23,14 @@ public class ExportService {
     @Autowired
     private ExportMapper exportMapper;
 
-    private static String WORD_NAME_FORMAT = "%s-%s-数据库表结构.doc";
+    private static String WORD_NAME_FORMAT = "%s-%s数据库表结构.doc";
 
     public void exportTableColumn(String projectName, String tableSchema, String tableSchemaDesc) {
         Map<String, Object> dataMap = new HashMap<String, Object>();
         List<TableVo> tableVoList = exportMapper.getTableVoList(tableSchema);
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("tableSchema", tableSchema);
+        tableVoList = tableVoList.stream().filter((item) -> !item.getName().startsWith("ACT_")).collect(Collectors.toList());
         for (TableVo tableVo : tableVoList) {
             paramMap.put("tableName", tableVo.getName());
             List<ColumnVo> columnVoList = exportMapper.getColumnVoList(paramMap);
